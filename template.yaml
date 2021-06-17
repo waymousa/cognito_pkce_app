@@ -65,7 +65,7 @@ Resources:
       ClientName: SrvSecDemoCognitoUserPoolClient
       GenerateSecret: false
 
-  UserPoolUser:
+  UserPoolUserAlice:
      Type: AWS::Cognito::UserPoolUser
      Properties:
        DesiredDeliveryMediums:
@@ -78,7 +78,7 @@ Resources:
            Value: '+447464491594'
        UserPoolId: !Ref SrvSecDemoCognitoUserPool
 
-  UserPoolUser:
+  UserPoolUserBob:
      Type: AWS::Cognito::UserPoolUser
      Properties:
        DesiredDeliveryMediums:

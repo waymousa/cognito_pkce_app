@@ -2,11 +2,11 @@ var myHeaders = new Headers();
 myHeaders.set('Cache-Control', 'no-store');
 var urlParams = new URLSearchParams(window.location.search);
 var tokens;
-var domain = "srv-sec-demo";
+var domain = "securecabbage-poc";
 var region = "us-east-1";
-var appClientId = "2ievq9d70fs2g7ajth6e56snvi";
-var userPoolId = "us-east-1_Li0M7pVYo";
-var redirectURI = "https://diq3qr0d5ppph.cloudfront.net/index.html";
+var appClientId = "732iu8ulf2ud4dgpof3dgd5i8d";
+var userPoolId = "us-east-1_oZYY8O2IS";
+var redirectURI = "https://d2mg0bkfmi7qtn.cloudfront.net/index.html";
 
 //Convert Payload from Base64-URL to JSON
 const decodePayload = payload => {
