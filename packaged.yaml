@@ -7,17 +7,17 @@ Description: 'serverless-security-demo
   '
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: serverless-security-demo
-    Description: Simple serverless application to demonstrate security concepts
+    Name: securecabbage-auth-poc
+    Description: Simple balance checker and authentication flow poc
     Author: Samuel Waymouth
     SpdxLicenseId: Apache-2.0
-    LicenseUrl: s3://sam-app-repo-875667080425/f2f4f1c7718eafbf1d0f861ba6331168
-    ReadmeUrl: s3://sam-app-repo-875667080425/699260724f2eac161ebb17d1dcb0c928
+    LicenseUrl: s3://811298697199-sam-package/f2f4f1c7718eafbf1d0f861ba6331168
+    ReadmeUrl: s3://811298697199-sam-package/9d3b814ffb2f0656809c5131a57f8e6b
     Labels:
     - tests
-    HomePageUrl: https://github.com/waymousa/srv-sec-demo-samcli
+    HomePageUrl: https://github.com/waymousa/cognito_pkce_app
     SemanticVersion: '0.0.1'
-    SourceCodeUrl: https://github.com/waymousa/srv-sec-demo-samcli
+    SourceCodeUrl: https://github.com/waymousa/cognito_pkce_app
 Globals:
   Function:
     Timeout: 3
@@ -27,7 +27,7 @@ Resources:
     Properties:
       StageName: Dev
       Cors:
-        AllowMethods: '''OPTIONS, GET'''
+        AllowMethods: '''OPTIONS, GET, POST'''
         AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
         AllowOrigin: '''*'''
       Auth:
@@ -68,63 +68,55 @@ Resources:
     Properties:
       DesiredDeliveryMediums:
       - EMAIL
-      Username: swaym@amazon.co.uk
+      Username: Bob
+      UserAttributes:
+      - name: email
+        value: swaym@amazon.com
+      - name: phone_number
+        value: '00447464491594'
       UserPoolId:
         Ref: SrvSecDemoCognitoUserPool
-  HomePageFunction:
+  ReadFromDynamoDBFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-app-repo-875667080425/17c61d218608b19d95e208c734af41d4
-      Handler: home.lambda_handler
-      Runtime: python3.7
-      Layers:
-      - Ref: Securitylayer
+      CodeUri: s3://811298697199-sam-package/43d0027426e4f0a6a9068a77435530d6
+      Handler: rddb.lambda_handler
+      Runtime: python3.8
       Events:
         Root:
           Type: Api
           Properties:
             RestApiId:
               Ref: SecureApi
-            Path: /home
-            Method: GET
-  SecretFunction:
-    Type: AWS::Serverless::Function
+            Path: /rddb
+            Method: get
+      Environment:
+        Variables:
+          loglevel: INFO
+          table:
+            Ref: TableOfStuff
+      Policies:
+      - DynamoDBReadPolicy:
+          TableName:
+            Ref: TableOfStuff
+  TableOfStuff:
+    Type: AWS::DynamoDB::Table
     Properties:
-      CodeUri: s3://sam-app-repo-875667080425/17c61d218608b19d95e208c734af41d4
-      Handler: secret.lambda_handler
-      Runtime: python3.7
-      Layers:
-      - Ref: Securitylayer
-      Events:
-        Root:
-          Type: Api
-          Properties:
-            RestApiId:
-              Ref: SecureApi
-            Path: /secret
-            Method: GET
-  Securitylayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: s3://sam-app-repo-875667080425/de0605f17cc3a6932896584fefe02be8
-      CompatibleRuntimes:
-      - python3.7
-    Metadata:
-      BuildMethod: python3.7
+      KeySchema:
+      - AttributeName: sub
+        KeyType: HASH
+      - AttributeName: balance
+        KeyType: RANGE
+      AttributeDefinitions:
+      - AttributeName: sub
+        AttributeType: S
+      - AttributeName: balance
+        AttributeType: S
+      ProvisionedThroughput:
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
 Outputs:
-  HomePageApi:
-    Description: API Gateway endpoint URL for Prod stage for Hello World function
+  ReadFromDynamoDBFunctionApi:
+    Description: API Gateway endpoint URL for Dev stage for Read from Dynamodb function
     Value:
-      Fn::Sub: https://${SecureApi}.execute-api.${AWS::Region}.amazonaws.com/Dev/
-  HomePageFunction:
-    Description: Home page Lambda Function ARN
-    Value:
-      Fn::GetAtt:
-      - HomePageFunction
-      - Arn
-  HomePageFunctionIamRole:
-    Description: Implicit IAM Role created for Home Page function
-    Value:
-      Fn::GetAtt:
-      - HomePageFunction
-      - Arn
+      Fn::Sub: https://${SecureApi}.execute-api.${AWS::Region}.amazonaws.com/Dev/rddb

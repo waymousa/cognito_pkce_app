@@ -9,16 +9,16 @@ Description: >
 
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: serverless-security-demo
-    Description: Simple serverless application to demonstrate security concepts
+    Name: securecabbage-auth-poc
+    Description: Simple balance checker and authentication flow poc
     Author: Samuel Waymouth
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE.txt
     ReadmeUrl: README.md
     Labels: ['tests']
-    HomePageUrl: https://github.com/waymousa/srv-sec-demo-samcli
+    HomePageUrl: https://github.com/waymousa/cognito_pkce_app
     SemanticVersion: 0.0.1
-    SourceCodeUrl: https://github.com/waymousa/srv-sec-demo-samcli
+    SourceCodeUrl: https://github.com/waymousa/cognito_pkce_app
 
 Globals:
   Function:
@@ -70,7 +70,25 @@ Resources:
      Properties:
        DesiredDeliveryMediums:
          - EMAIL
-       Username: swaym@amazon.co.uk
+       Username: swaym+alice@amazon.com
+       UserAttributes:
+         - Name: email
+           Value: swaym+alice@amazon.com
+         - Name: phone_number
+           Value: '+447464491594'
+       UserPoolId: !Ref SrvSecDemoCognitoUserPool
+
+  UserPoolUser:
+     Type: AWS::Cognito::UserPoolUser
+     Properties:
+       DesiredDeliveryMediums:
+         - EMAIL
+       Username: swaym+bob@amazon.com
+       UserAttributes:
+         - Name: email
+           Value: swaym+bob@amazon.com
+         - Name: phone_number
+           Value: '+447464491594'
        UserPoolId: !Ref SrvSecDemoCognitoUserPool
 
   ReadFromDynamoDBFunction:
@@ -114,15 +132,6 @@ Resources:
       ProvisionedThroughput: 
         ReadCapacityUnits: "5"
         WriteCapacityUnits: "5"
-
-  Securitylayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      ContentUri: ./security_layer
-      CompatibleRuntimes:
-        - python3.8
-    Metadata:
-      BuildMethod: python3.8
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
