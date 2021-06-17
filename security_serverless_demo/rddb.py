@@ -61,7 +61,7 @@ def lambda_handler(event, context):
             "headers": {
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-                "Access-Control-Allow-Origin": "https://diq3qr0d5ppph.cloudfront.net",
+                "Access-Control-Allow-Origin": "https://d2mg0bkfmi7qtn.cloudfront.net",
                 "Content-Type": "text/html"
                 },
             "body": "Unauthorized"
