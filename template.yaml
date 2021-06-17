@@ -106,7 +106,7 @@ Resources:
             Method: get
       Environment:
         Variables:
-          loglevel: INFO
+          loglevel: DEBUG
           table: !Ref TableOfStuff
       Policies:
         - DynamoDBReadPolicy:

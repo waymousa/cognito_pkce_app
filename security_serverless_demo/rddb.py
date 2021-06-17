@@ -1,5 +1,6 @@
 import boto3, logging, html, os, json
 from json2html import *
+from boto3.dynamodb.conditions import Key
 
 logger = logging.getLogger()
 logger.setLevel(os.environ['loglevel'])
@@ -22,7 +23,9 @@ def lambda_handler(event, context):
         table = dynamodb.Table(os.environ['table'])
 
         # fetch all todos from the database
-        result = table.scan()
+        result = table.query(
+            KeyConditionExpression=Key('sub').eq(sub)
+        )
 
         logger.debug('result_set=%s' % result)
 
@@ -43,10 +46,10 @@ def lambda_handler(event, context):
             "headers": {
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
-                "Access-Control-Allow-Origin": "https://diq3qr0d5ppph.cloudfront.net",
+                "Access-Control-Allow-Origin": "https://d2mg0bkfmi7qtn.cloudfront.net",
                 "Content-Type": "application/json"
                 },
-            "body": table
+            "body": items
         }
 
         return response

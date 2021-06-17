@@ -4,8 +4,8 @@ var urlParams = new URLSearchParams(window.location.search);
 var tokens;
 var domain = "securecabbage-poc";
 var region = "us-east-1";
-var appClientId = "732iu8ulf2ud4dgpof3dgd5i8d";
-var userPoolId = "us-east-1_oZYY8O2IS";
+var appClientId = "npc57qfrbmvnqdd2r2mlbbta9";
+var userPoolId = "us-east-1_6Fs1qVtt9";
 var redirectURI = "https://d2mg0bkfmi7qtn.cloudfront.net/index.html";
 
 //Convert Payload from Base64-URL to JSON
